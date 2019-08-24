@@ -1,0 +1,75 @@
+ <!DOCTYPE html>
+<html> 
+	<head>
+		<meta charset="utf-8" />
+		<title>俄罗斯方块</title> 
+	<style>     
+  	body{                
+  		margin:0px;     
+  		overflow: hidden;  
+  	}    
+  	canvas{               
+  		margin:0px;
+  		position:absolute;  
+  		z-index = 0;
+  	}        
+  	button{    
+  		margin:0px;
+  		position:fixed;  
+  		background-color: white;
+
+  		z-index: 1000;
+  	}   
+  </style> 
+	</head>
+<body>        
+<script id = "drawcubeVertex" type = "x-shader/x-vertex">
+	 	attribute vec3 a_Position;
+		attribute vec3 a_Normal; 
+		        
+	    uniform mat4 u_MvpMatrix; 
+	    uniform vec3 u_PointLight;    
+	    uniform vec2 u_Center;        
+         
+        varying vec3 v_Position;        
+        varying vec3 v_Normal;  
+        varying vec3 v_Drawpos;
+   	void main(void) {   
+   		 v_Drawpos = a_Position.xyz;
+   		 vec3 position = vec3(a_Position.xy + u_Center, a_Position.z );
+  		 gl_Position = u_MvpMatrix * vec4(position, 1.0); 
+  		 vec3 lightDirection = normalize(vec3(0.0, 20.0, 0.0) - position);
+  	     v_Position = position;
+  	     v_Normal = normalize(a_Normal);
+   	}                     
+</script>                              
+     
+<script id = "drawcubeFragment" type = "x-shader/x-vertex">
+	#ifdef GL_ES                   
+				  precision highp float; 
+				#endif
+			uniform vec3 u_Color;
+			                   
+			varying vec3 v_Position;     
+       		varying vec3 v_Normal;  
+       		varying vec3 v_Drawpos;       
+    		void main(void) {           
+    		float w = exp(sqrt(dot(v_Drawpos, v_Drawpos))) * 0.2;
+    	    float s = exp(-(3.0 - abs(v_Drawpos.x) - abs(v_Drawpos.y) - abs(v_Drawpos.z)) / 1.5);   
+    		float diffuse = dot(v_Normal, normalize(vec3(0.0, 0.0, 10.0) - v_Position)); 
+    	    gl_FragColor = vec4(u_Color * w, 1.0);  
+    	              
+    		}                                
+</script>                                       
+                                                                                                      
+<button onclick = "initialite()">开始</button>  
+<canvas id = "canvas"></canvas>
+<script type="text/javascript" src = "js/vector.js"></script>
+<script type="text/javascript" src="js/3Dtest.js" ></script>
+<script type="text/javascript" src = "js/Matrix.js" ></script>
+<script type="text/javascript" src="js/Cube.js" ></script>
+<script type="text/javascript" src="js/connect.js"></script>
+<script type="text/javascript" src = "js/main.js"></script>    
+   
+</body>             
+</html>      
